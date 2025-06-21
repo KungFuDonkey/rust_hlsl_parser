@@ -1,15 +1,9 @@
 use std::fmt::Write;
 
 use crate::parser::syntax_tokens::SyntaxTokenType;
+use std::collections::HashMap;
 
 use super::{source_file::{ISourceFile, SourceFile, SourceText}, syntax_tokens::{get_keyword_token_type, SyntaxToken}};
-
-pub enum PreProcessorDefinition
-{
-    NonFunction {name: String, value: String},
-    Function {name: String, args: String, value: String}
-}
-
 // ILexer
 // Generates a tokenized version of a source file, also contains pre-parsed tokens for defines and includes
 // This tokenized version can be traversed by a LexerTraverser
@@ -25,6 +19,78 @@ pub struct Lexer
 
 impl Lexer
 {
+    fn process_preprocessor_directive(source: &mut SourceText, preprocessor_vars: &mut HashMap<String, SyntaxTokenType>, preprocessor_if_stack: &mut Vec<SyntaxTokenType>) -> SyntaxTokenType
+    {
+        let mut directive = String::new();
+
+        // process #
+        source.next_char();
+
+        while source.current_char() != '\r' && source.current_char() != '\n' && source.current_char() != ' '
+        {
+            directive.write_char(source.current_char());
+            source.next_char();
+        }
+
+        if directive == "endif"
+        {
+            return SyntaxTokenType::EndIfDirective;
+        }
+
+        let allow_break = directive == "define";
+        let mut skip_break = false;
+
+        let mut value = String::new();
+
+        loop {
+
+            if source.current_char() == '/' && source.peek() == '/'
+            {
+                // hit a comment
+                break;
+            }
+
+            if source.current_char() == '\\'
+            {
+                skip_break = allow_break;
+                source.next_char();
+                continue;
+            }
+
+            if source.current_char() == '\r' || source.current_char() == '\n'
+            {
+                if skip_break
+                {
+                    skip_break = false;
+                    
+                    if source.current_char() == '\r' && source.peek() == '\n'
+                    {
+                        source.next_char();
+                        source.next_char();
+                    }
+                    else {
+                        source.next_char();
+                    }
+                    continue;
+                }
+
+                // Exit loop as we hit the end of the line
+                break;
+            }
+
+            value.write_char(source.current_char());
+            source.next_char();
+        }
+
+        match directive.as_str()
+        {
+            "if" => 
+            _ => return SyntaxTokenType::BadDirective { name: directive }
+        }
+
+        todo!()
+    }
+
     fn read_number(source: &mut SourceText) -> SyntaxTokenType
     {
         let mut sb = String::new();
@@ -354,6 +420,10 @@ impl Lexer
 
     pub fn from_text(source: &mut Box<SourceText>) -> Self
     {
+        // Collection containing #define variables and macros
+        // Vec<String> serves as the input to a macro
+        let mut preprocessor_vars: HashMap<String, SyntaxTokenType> = HashMap::new();
+        let mut preprocessor_if_stack: Vec<SyntaxTokenType> = Vec::new();
         let mut tokens: Vec<SyntaxToken> = Vec::new();
         loop
         {
@@ -364,6 +434,7 @@ impl Lexer
             let token = match source.current_char()
             {
                 '\0' => break, // reached eof
+                '#' => Lexer::process_preprocessor_directive(source, preprocessor_vars, preprocessor_if_stack),
                 ' ' => WhiteSpace,
                 '~'  => TildeToken,
                 '&'  => Lexer::read_double_char_or_eq_op(source, AmpersandToken, AmpersandAmpersandToken, AmpersandEqualsToken),

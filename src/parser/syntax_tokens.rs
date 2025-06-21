@@ -532,27 +532,20 @@ pub enum SyntaxTokenType {
 
     EndOfFileToken,
 
-    IfDirective {
-        test: String,
-        next_branch: u32,
-    },
-    IfDefDirective {
-        definition: String,
-        next_branch: u32,
-    },
-    IfNDefDirective {
-        definition: String,
-        next_branch: u32,
-    },
-    ElifDirective {
-        next_branch: u32,
-    },
-    ElseDirective {
-        next_branch: u32,
-    },
+    IfDirective,
+    IfDefDirective,
+    IfNDefDirective,
+    ElifDirective,
+    ElseDirective,
     EndIfDirective,
     PragmaDirective {
         value: String,
+    },
+    ErrorDirective {
+        value: String
+    },
+    LineDirective {
+        value: String
     },
     IncludeDirective {
         path: String,
@@ -563,10 +556,14 @@ pub enum SyntaxTokenType {
     },
     PreProcessorDefinitionFunction {
         name: String,
+        args: String,
         value: String,
     },
     UndefDirective {
         name: String,
+    },
+    BadDirective {
+        name: String
     },
 
     WhiteSpace,

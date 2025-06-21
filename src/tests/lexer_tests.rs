@@ -3,7 +3,7 @@
 #[cfg(test)]
 mod lexer_tests {
     use core::f64;
-    use std::{fs::File, io::Write, path::PathBuf};
+    use std::{io::Write, path::PathBuf};
 
     use crate::{parser::{lexer::{ILexer, Lexer}, source_file::{ISourceFile, SourceFile}, syntax_tokens::SyntaxTokenType, ParserSettings}, tests::test_utils::{find_all_shader_paths, find_project_dir}};
 
