@@ -2,15 +2,13 @@
 
 A library written in rust to parse and expose AST from hlsl files. This is a WIP, and the current development plan of this library is as follows:
 
-[x] Read and load HLSL files
-[ ] Find #include directives to load all files from disk
-[ ] Create a preprocessor tokenizer
-  - Should not handle preprocessor directives immediately
-  - Allows the parser to define the preprocessor input and cache the files
-[ ] Create HLSL parser
-[ ] Cache parsed files
-[ ] Allow file updates in memory for future integration with language server
-[ ] File Updates should not create a full reparse of the AST, but only a subsection
+- [x] Read and load HLSL files
+- [ ] Find #include directives to load all files from disk
+- [ ] Create lexer
+- [ ] Create HLSL parser
+- [ ] Cache parsed files
+- [ ] Allow file updates in memory for future integration with language server
+- [ ] File Updates should not create a full reparse of the AST, but only a subsection
 
 # pipeline
 For each file we have the following pipeline to process the files:
