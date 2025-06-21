@@ -5,7 +5,10 @@ A library written in rust to parse and expose AST from hlsl files. This is a WIP
 - [x] Read and load HLSL files
 - [ ] Find #include directives to load all files from disk
 - [ ] Create lexer
+- [ ] Create preprocessor parser
+- [ ] Create global scope parser  
 - [ ] Create HLSL parser
+  - [ ] 
 - [ ] Cache parsed files
 - [ ] Allow file updates in memory for future integration with language server
 - [ ] File Updates should not create a full reparse of the AST, but only a subsection
