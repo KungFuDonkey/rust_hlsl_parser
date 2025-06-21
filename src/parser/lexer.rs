@@ -84,7 +84,7 @@ impl Lexer
 
         match directive.as_str()
         {
-            "if" => 
+            "if" => {},
             _ => return SyntaxTokenType::BadDirective { name: directive }
         }
 
@@ -434,7 +434,7 @@ impl Lexer
             let token = match source.current_char()
             {
                 '\0' => break, // reached eof
-                '#' => Lexer::process_preprocessor_directive(source, preprocessor_vars, preprocessor_if_stack),
+                '#' => todo!(), //Lexer::process_preprocessor_directive(source, preprocessor_vars, preprocessor_if_stack),
                 ' ' => WhiteSpace,
                 '~'  => TildeToken,
                 '&'  => Lexer::read_double_char_or_eq_op(source, AmpersandToken, AmpersandAmpersandToken, AmpersandEqualsToken),
@@ -524,8 +524,8 @@ pub trait ILexerTraverser
 pub struct LexerTraverser
 {
     current_token_idx: usize,
-    pre_file_definitions: Vec<PreProcessorDefinition>,
-    internal_file_definitions: Vec<PreProcessorDefinition>,
+    //pre_file_definitions: Vec<PreProcessorDefinition>,
+    //internal_file_definitions: Vec<PreProcessorDefinition>,
     tokens: Vec<SyntaxToken>,
     out_of_bounds_token: SyntaxToken
 }
